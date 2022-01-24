@@ -52,14 +52,21 @@ else
 fi
 PATHTR=${PATHTR:-$( cd ${MYDIR}/.. && pwd )}
 
+set +x
 #Load required modulefiles
 if [[ $MACHINE_ID != "unknown" ]]; then
-   module purge
+   if [[ $MACHINE_ID == "gaea" ]]; then
+      # Activate lua environment for gaea
+      source /lustre/f2/pdata/esrl/gsd/contrib/lua-5.1.4.9/init/init_lmod.sh
+   else
+      module purge
+   fi
    module use $PATHTR/modulefiles
    modulefile=${MACHINE_ID}
    module load $modulefile
    module list
 fi
+set -x
 
 rm -rf build install
 mkdir build && cd build
