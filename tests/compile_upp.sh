@@ -112,16 +112,13 @@ source ${PATHTR}/tests/detect_machine.sh
 if [[ $MACHINE_ID != "unknown" ]]; then
    if [ $MACHINE_ID == "wcoss2"  -o $MACHINE_ID == "wcoss2_a" ]; then
       module reset
-   elif [[ "${MACHINE_ID}" = "gaeac5" ]] ; then
-       # We are on GAEA.
-       #if ( ! eval module help > /dev/null 2>&1 ) ; then
-       #    source /usr/share/lmod/lmod/init/bash
-       #    source /etc/profile
-       #fi
-       . ${MODULESHOME}/init/sh
+   elif [[ "$MACHINE_ID" =~ gaea* ]] ; then
+       source ${MODULESHOME}/init/bash
        module reset
-   elif [[ "${MACHINE_ID}" == "gaeac6" ]] ; then
-       source /opt/cray/pe/lmod/8.7.31/init/bash
+       # Unset the read-only variables $PELOCAL_PRGENV and $RCLOCAL_PRGENV
+       gdb -ex 'call (int) unbind_variable("PELOCAL_PRGENV")' \
+           -ex 'call (int) unbind_variable("RCLOCAL_PRGENV")' \
+           --pid=$$ --batch
    else
       module purge
    fi
